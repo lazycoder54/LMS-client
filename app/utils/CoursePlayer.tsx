@@ -19,8 +19,12 @@ const CoursePlayer: FC<Props> = ({ videoUrl }) => {
       })
       .then((res) => {
         setVideoData(res.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching OTP:", error);
       });
   }, [videoUrl]);
+  
 
   return (
     <div style={{ position: "relative", paddingTop: "56.25%", overflow:"hidden"}}>
