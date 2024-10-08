@@ -9,6 +9,10 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  experimental:{
+    reactRoot: true,
+    suppressHydrationWarning: true,
+  }
 };
 
-export default nextConfig;
+module.exports = nextConfig;
