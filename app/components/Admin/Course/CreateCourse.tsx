@@ -40,6 +40,7 @@ const CreateCourse = (props: Props) => {
     demoUrl: "",
     thumbnail: "",
   });
+  console.log(courseInfo)
   const [benefits, setBenefits] = useState([{ title: "" }]);
   const [prerequisites, setPrerequisites] = useState([{ title: "" }]);
   const [courseContentData, setCourseContentData] = useState([
@@ -98,8 +99,8 @@ const CreateCourse = (props: Props) => {
       tags: courseInfo.tags,
       thumbnail: courseInfo.thumbnail,
       level: courseInfo.level,
-      categories: courseInfo.categories,
       demoUrl: courseInfo.demoUrl,
+      categories: courseInfo.categories,
       totalVideos: courseContentData.length,
       benefits: formattedBenefits,
       prerequisites: formattedPrerequisites,

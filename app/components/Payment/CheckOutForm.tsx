@@ -8,7 +8,7 @@ import {
   useStripe,
 } from "@stripe/react-stripe-js";
 import { redirect } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import socketIO from "socket.io-client";
 const ENDPOINT = process.env.NEXT_PUBLIC_SOCKET_SERVER_URI || "";
@@ -20,13 +20,14 @@ type Props = {
   user: any;
 };
 
-const CheckOutForm = ({ setOpen, data, user }: Props) => {
+const CheckOutForm:FC<Props> = ({ setOpen, data, user }) => {
   const stripe = useStripe();
   const elements = useElements();
   const [message, setMessage] = useState<any>("");
   const [createOrder, { data: orderData, error }] = useCreateOrderMutation();
   const [loadUser, setLoadUser] = useState(false);
-  const {} = useLoadUserQuery({ skip: loadUser ? false : true });
+  const {  refetch: refetchUser } = useLoadUserQuery(undefined, {});
+
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: any) => {
@@ -50,10 +51,10 @@ const CheckOutForm = ({ setOpen, data, user }: Props) => {
 
   useEffect(() => {
     if (orderData) {
-      setLoadUser(true);
+      refetchUser();
       socketId.emit("notification", {
         title: "New Order",
-        message: `You have a new order from ${data.course.name}`,
+        message: `You have a new order from ${data.name}`,
         userId: user._id,
       });
       redirect(`/course-access/${data._id}`);

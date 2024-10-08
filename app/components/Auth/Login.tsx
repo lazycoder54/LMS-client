@@ -16,6 +16,7 @@ import { signIn } from "next-auth/react";
 type Props = {
   setRoute: (route: string) => void;
   setOpen: (open: boolean) => void;
+  refetch: any;
 };
 
 const schema = Yup.object().shape({
@@ -25,24 +26,22 @@ const schema = Yup.object().shape({
   password: Yup.string().required("Please enter your password!").min(6),
 });
 
-const Login: FC<Props> = ({ setRoute, setOpen }) => {
+const Login: FC<Props> = ({ setRoute, setOpen, refetch }) => {
   const [show, setShow] = useState(false);
   const [login, { isSuccess, error }] = useLoginMutation();
   const formik = useFormik({
     initialValues: { email: "", password: "" },
     validationSchema: schema,
     onSubmit: async ({ email, password }) => {
-      console.log("Email:", email); // Add this line to log the email before login
-      console.log("Password:", password); // Add this line to log the password before login
       await login({ email, password });
     },
   });
-  
 
   useEffect(() => {
     if (isSuccess) {
       toast.success("Login successfuly!");
       setOpen(false);
+      refetch();
     }
     if (error) {
       if ("data" in error) {
@@ -115,11 +114,16 @@ const Login: FC<Props> = ({ setRoute, setOpen }) => {
           Or join with
         </h5>
         <div className="flex items-center justify-center my-3">
-          <FcGoogle size={30} className="cursor-pointer mr-2"
-          onClick={() => signIn("google")}
+          <FcGoogle
+            size={30}
+            className="cursor-pointer mr-2"
+            onClick={() => signIn("google")}
           />
-          <AiFillGithub size={30} className="cursor-pointer ml-2" 
-          onClick={() => signIn("github")} />
+          <AiFillGithub
+            size={30}
+            className="cursor-pointer ml-2"
+            onClick={() => signIn("github")}
+          />
         </div>
         <h5 className="text-center pt-4 font-Poppins text-[14px]">
           Not have any account?{" "}

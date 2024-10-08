@@ -34,7 +34,7 @@ const CourseContentList: FC<Props> = (props) => {
   return (
     <div
       className={`mt-[15px] w-full ${
-        !props.isDemo && "ml-[-30px] min-h-screen sticky top-24 left-0 z-30"
+        !props.isDemo && 'ml-[-30px] min-h-screen sticky top-24 left-0 z-30'
       }`}
     >
       {videoSections.map((section: string, sectionIndex: number) => {
@@ -62,7 +62,7 @@ const CourseContentList: FC<Props> = (props) => {
             <div className="w-full flex">
               {/* render video section*/}
               <div className="w-full flex justify-between items-center">
-                <h2 className="text-[25px] text-black dark:text-white">
+                <h2 className="text-[22px] text-black dark:text-white">
                   {section}
                 </h2>
                 <button

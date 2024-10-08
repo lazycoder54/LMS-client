@@ -6,10 +6,11 @@ import { ThemeProvider } from "./utils/theme-provider";
 import { Toaster } from "react-hot-toast";
 import { Providers } from "./Provider";
 import { SessionProvider } from "next-auth/react";
-import { useLoadUserQuery } from "@/redux/features/api/apiSlice";
 import Loader from "./components/Loader/Loader";
-import { useEffect } from "react";
+import React, { FC, useEffect, useState } from "react";
 import socketIO from "socket.io-client";
+import { useLoadUserQuery } from "@/redux/features/api/apiSlice";
+
 const ENDPOINT = process.env.NEXT_PUBLIC_SOCKET_SERVER_URI || "";
 const socketId = socketIO(ENDPOINT, { transports: ["websocket"] });
 
@@ -31,14 +32,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning={true}>
       <body
         className={`${poppins.variable} ${Josefin.variable} !bg-white bg-no-repeat dark:bg-gradient-to-b dark:from-gray-900 dark:to-black duration-300`}
       >
         <Providers>
           <SessionProvider>
             <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-              <Custom>{children}</Custom>
+              <Custom>
+                <div>{children}</div>
+              </Custom>
               <Toaster position="top-center" reverseOrder={false} />
             </ThemeProvider>
           </SessionProvider>
@@ -48,18 +51,22 @@ export default function RootLayout({
   );
 }
 
-const Custom: React.FC<{children: React.ReactNode}> = ({children}) => {
+const Custom: FC<{ children: React.ReactNode }> = ({ children }) => {
   const {isLoading} = useLoadUserQuery({});
-
+  
   useEffect(() => {
     socketId.on("connection", () => {});
   }, [])
   
-  return (
-    <>
-    {
-      isLoading ? <Loader /> : <> {children} </>
-    }
-    </>
-  )
-}
+  return <>{children}</>;
+};
+
+// for loading with a Loader
+//   return (
+//     <>
+//     {
+//       isLoading ? <Loader /> : <> {children} </>
+//     }
+//     </>
+//   )
+// }

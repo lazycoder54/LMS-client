@@ -8,7 +8,6 @@ import {
   useGetCourseDetailsQuery,
 } from "@/redux/features/courses/coursesApi";
 import Image from "next/image";
-import { format } from "timeago.js";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import {
@@ -21,6 +20,7 @@ import { BiMessage } from "react-icons/bi";
 import { VscVerifiedFilled } from "react-icons/vsc";
 import Ratings from "@/app/utils/Ratings";
 import socketIO from "socket.io-client";
+import { format } from "timeago.js";
 const ENDPOINT = process.env.NEXT_PUBLIC_SOCKET_SERVER_URI || "";
 const socketId = socketIO(ENDPOINT, { transports: ["websocket"] });
 
@@ -107,22 +107,10 @@ const CourseContentMedia = ({
       refetch();
       toast.success("Question added successfully");
       socketId.emit("notification", {
-        title: "New Question Recievedr",
+        title: "New Question Received",
         message: `You have a new question in ${data[activeVideo].title}`,
         userId: user._id,
       });
-    }
-    if (answerSuccess) {
-      setAnswer("");
-      refetch();
-      toast.success("Answer added successfully");
-      if (user.role !== "admin") {
-        socketId.emit("notification", {
-          title: "New Reply Recieved",
-          message: `You have a new question reply in ${data[activeVideo].title}`,
-          userId: user._id,
-        });
-      }
     }
     if (error) {
       if ("data" in error) {
@@ -130,50 +118,73 @@ const CourseContentMedia = ({
         toast.error(errorMessage.data.message);
       }
     }
+  }, [isSuccess, data, activeVideo, refetch, user._id, error]);
+
+  useEffect(() => {
+    if (answerSuccess) {
+      setAnswer("");
+      refetch();
+      toast.success("Answer added successfully");
+      if (user.role !== "admin") {
+        socketId.emit("notification", {
+          title: "New Reply Received",
+          message: `You have a new question reply in ${data[activeVideo].title}`,
+          userId: user._id,
+        });
+      }
+    }
     if (answerError) {
       if ("data" in answerError) {
-        const errorMessage = answerError as any;
+        const errorMessage = error as any;
         toast.error(errorMessage.data.message);
       }
     }
+  }, [
+    answerSuccess,
+    data,
+    activeVideo,
+    refetch,
+    answerError,
+    user.role,
+    user._id,
+  ]);
+
+  useEffect(() => {
     if (reviewSuccess) {
       setReview("");
       setRating(1);
       courseRefetch();
       toast.success("Review added successfully");
       socketId.emit("notification", {
-        title: "New Review Recievedr",
+        title: "New Review Received",
         message: `You have a new review in ${data[activeVideo].title}`,
         userId: user._id,
       });
     }
     if (reviewError) {
       if ("data" in reviewError) {
-        const errorMessage = reviewError as any;
+        const errorMessage = error as any;
         toast.error(errorMessage.data.message);
       }
     }
+  }, [reviewSuccess, data, activeVideo, courseRefetch, reviewError, user._id]);
+
+  useEffect(() => {
     if (replySuccess) {
       setReply("");
       courseRefetch();
       toast.success("Reply added successfully");
     }
+  }, [replySuccess, courseRefetch]);
+
+  useEffect(() => {
     if (replyError) {
       if ("data" in replyError) {
         const errorMessage = replyError as any;
         toast.error(errorMessage.data.message);
       }
     }
-  }, [
-    isSuccess,
-    error,
-    answerSuccess,
-    answerError,
-    reviewSuccess,
-    reviewError,
-    replySuccess,
-    replyError,
-  ]);
+  }, [replyError]);
 
   const handleAnswerSubmit = () => {
     addAnswerInQuestion({
@@ -307,7 +318,7 @@ const CourseContentMedia = ({
               cols={40}
               rows={5}
               placeholder="write your question..."
-              className="outline-none bg-transparent ml-3 border border-[#ffffff57] 800px:w-full p-2 rounded w-[90%] 800px:text-[18px] font-Poppins"
+              className="outline-none bg-transparent dark:text-white ml-3 border border-[#ffffff57] 800px:w-full p-2 rounded w-[90%] 800px:text-[18px] font-Poppins"
             ></textarea>
           </div>
           <div className="w-full flex justify-end">
@@ -391,7 +402,7 @@ const CourseContentMedia = ({
                       cols={40}
                       rows={5}
                       placeholder="write your review..."
-                      className="outline-none bg-transparent ml-3 border border-[#ffffff57] w-[95%] 800px:w-full p-2 rounded 800px:text-[18px] font-Poppins"
+                      className="outline-none bg-transparent dark:text-white 800px:ml-3 text-black border border-[#ffffff27] w-[95%] 800px:w-full p-2 rounded 800px:text-[18px] font-Poppins"
                     ></textarea>
                   </div>
                 </div>
@@ -414,9 +425,12 @@ const CourseContentMedia = ({
             <br />
             <div className="w-full h-[1px] bg-[#ffffff3b]"></div>
             <div className="w-full">
-              {(course?.reviews && [...course.reviews].reverse()).map(
+              {(course?.reviews && [...course.reviews].reverse())?.map(
                 (item: any, index: number) => (
-                  <div className="w-full my-5 dark:text-white text-black" key={index}>
+                  <div
+                    className="w-full my-5 dark:text-white text-black"
+                    key={index}
+                  >
                     <div className="w-full flex">
                       <div>
                         <Image
@@ -440,20 +454,19 @@ const CourseContentMedia = ({
                         </small>
                       </div>
                     </div>
-                    {user.role === "admin" &&
-                      item.commentReplies.length === 0 && (
-                        <span
-                          className={`${styles.label} !ml-10 cursor-pointer`}
-                          onClick={() => {
-                            setIsReviewReply(true);
-                            setReviewId(item._id);
-                          }}
-                        >
-                          Add Reply
-                        </span>
-                      )}
+                    {user.role === "admin" && (
+                      <span
+                        className={`${styles.label} !ml-10 cursor-pointer`}
+                        onClick={() => {
+                          setIsReviewReply(true);
+                          setReviewId(item._id);
+                        }}
+                      >
+                        Add Reply
+                      </span>
+                    )}
 
-                    {isReviewReply && reviewId === item._id && (
+                    {isReviewReply && (
                       <div className="w-full flex relative dark:text-white text-black">
                         <input
                           type="text"
@@ -472,7 +485,7 @@ const CourseContentMedia = ({
                       </div>
                     )}
 
-                    {item.commentReplies.map((i: any, index: number) => {
+                    {item.commentReplies.map((i: any, index: number) => (
                       <div className="w-full flex 800px:ml-16 my-5" key={index}>
                         <div className="w-[50px] h-[50px]">
                           <Image
@@ -499,8 +512,8 @@ const CourseContentMedia = ({
                             {format(i.createdAt)} •
                           </small>
                         </div>
-                      </div>;
-                    })}
+                      </div>
+                    ))}
                   </div>
                 )
               )}
@@ -607,7 +620,10 @@ const CommentItem = ({
         {replyActive && questionId === item._id && (
           <>
             {item.questionReplies.map((item: any) => (
-              <div className="w-full flex 800px:ml-16 my-5 text-black dark:text-white" key={item._id}>
+              <div
+                className="w-full flex 800px:ml-16 my-5 text-black dark:text-white"
+                key={item._id}
+              >
                 <div>
                   <Image
                     src={

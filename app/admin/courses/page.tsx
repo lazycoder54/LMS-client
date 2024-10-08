@@ -5,9 +5,8 @@ import React from 'react'
 import AdminSidebar from "../../components/Admin/sidebar/AdminSidebar";
 import DashboardHero from '@/app/components/Admin/DashboardHero';
 import AllCourses from "../../components/Admin/Course/AllCourses";
-type Props = {}
 
-const Page = (props: Props) => {
+const Page = () => {
   return (
     <div>
       <AdminProtected>

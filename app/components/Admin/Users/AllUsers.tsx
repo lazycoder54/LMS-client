@@ -1,14 +1,6 @@
 import React, { FC, useEffect, useState } from "react";
 import { DataGrid } from "@mui/x-data-grid";
-import {
-  Box,
-  Button,
-  Modal,
-  FormControl,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-} from "@mui/material";
+import { Box, Button, Modal } from "@mui/material";
 import { AiOutlineDelete, AiOutlineMail } from "react-icons/ai";
 import Loader from "../../Loader/Loader";
 import { format } from "timeago.js";
@@ -40,8 +32,6 @@ const AllUsers: FC<Props> = ({ isTeam }) => {
   );
   const [deleteUser, { isSuccess: deleteSuccess, error: deleteError }] =
     useDeleteUserMutation({});
-  const [updateRoleModalOpen, setUpdateRoleModalOpen] = useState(false);
-  const [selectedRole, setSelectedRole] = useState("");
 
   useEffect(() => {
     if (updateError) {
@@ -58,7 +48,7 @@ const AllUsers: FC<Props> = ({ isTeam }) => {
     }
     if (deleteSuccess) {
       refetch();
-      toast.success("Deleted user successfully");
+      toast.success("User deleted successfully");
       setOpen(false);
     }
     if (deleteError) {
@@ -68,22 +58,6 @@ const AllUsers: FC<Props> = ({ isTeam }) => {
       }
     }
   }, [updateError, isSuccess, deleteSuccess, deleteError]);
-
-  const handleUpdateRole = async () => {
-    if (!selectedRole) return;
-    try {
-      await updateUserRole({
-        userId,
-        role: selectedRole,
-      });
-    } catch (error) {
-      console.error("Failed to update user role:", error);
-    }
-  };
-
-  const handleRoleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedRole(event.target.value);
-  };
 
   const columns = [
     { field: "id", headerName: "ID", flex: 0.3 },
@@ -160,6 +134,16 @@ const AllUsers: FC<Props> = ({ isTeam }) => {
       });
   }
 
+  const handleSubmit = async () => {
+    await updateUserRole({ email, role });
+  };
+  const handleRoleChange = (e:any) => {
+    setRole(e.target.value);
+};
+  const handleDelete = async () => {
+    const id = userId;
+    await deleteUser(id);
+  };
   return (
     <div className="mt-[120px]">
       {isLoading ? (
@@ -167,14 +151,14 @@ const AllUsers: FC<Props> = ({ isTeam }) => {
       ) : (
         <Box m="20px">
           {isTeam && (
-          <div className="w-full flex justify-end">
-            <div
-              className={`${styles.button} !w-[200px] dark:bg-[#57c7a3] !h-[35px] dark:border dark:border-[#ffffff6c]`}
-              onClick={() => setActive(!active)}
-            >
-              Add New Member
+            <div className="w-full flex justify-end">
+              <div
+                className={`${styles.button} !w-[200px] !rounded-[10px] dark:bg-[#57c7a3] !h-[35px] dark:border dark:border-[#ffffff6c]`}
+                onClick={() => setActive(!active)}
+              >
+                Add New Member
+              </div>
             </div>
-          </div>
           )}
           <Box
             m="40px 0 0 0"
@@ -233,43 +217,37 @@ const AllUsers: FC<Props> = ({ isTeam }) => {
           {active && (
             <Modal
               open={active}
-              onClose={() => setActive(false)}
+              onClose={() => setActive(!active)}
               aria-labelledby="modal-modal-title"
               aria-describedby="modal-modal-description"
             >
-              <Box className="absolute top-[50%] left-[50%] -translate-x-1/2 ">
-                <h1 className={`${styles.title}`}>Update User Role</h1>
-                <FormControl component="fieldset">
-                  <RadioGroup
-                    aria-label="role"
-                    name="role"
-                    value={selectedRole}
+              <Box className="absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[450px] bg-white dark:bg-slate-900 rounded-[8px] shadow p-4 outline-none">
+                <h1 className={`${styles.title}`}>Add New Member</h1>
+                <div className="mt-4">
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter email..."
+                    className={`${styles.input}`}
+                  />
+                  <select
+                    name=""
+                    id=""
+                    className={`${styles.input}dark:text-white dark:bg-gray-800 !mt-6`}
+                    value={role}
                     onChange={handleRoleChange}
                   >
-                    <FormControlLabel
-                      value="user"
-                      control={<Radio />}
-                      label="User"
-                    />
-                    <FormControlLabel
-                      value="admin"
-                      control={<Radio />}
-                      label="Admin"
-                    />
-                  </RadioGroup>
-                </FormControl>
-                <div className="flex w-full items-center justify-between mb-6 mt-2">
+                    <option value="admin">Admin</option>
+                    <option value="user">User</option>
+                  </select>
+
+                  <br />
                   <div
-                    className={`${styles.button} !w-[120px] h-[30px] bg-[#57a7c3]`}
-                    onClick={() => setActive(false)}
+                    className={`${styles.button} my-6 !h-[30px]`}
+                    onClick={handleSubmit}
                   >
-                    Cancel
-                  </div>
-                  <div
-                    className={`${styles.button} !w-[120px] h-[30px] bg-[#d63f]`}
-                    onClick={handleUpdateRole}
-                  >
-                    Update Role
+                    Submit
                   </div>
                 </div>
               </Box>
@@ -283,11 +261,11 @@ const AllUsers: FC<Props> = ({ isTeam }) => {
               aria-labelledby="modal-modal-title"
               aria-describedby="modal-modal-description"
             >
-              <Box className="absolute top-[50%] left-[50%] -translate-x-1/2 ">
+              <Box className="absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[450px] bg-white dark:bg-slate-900 rounded-[8px] shadow p-4 outline-none">
                 <h1 className={`${styles.title}`}>
                   Are you sure you want to delete this course?
                 </h1>
-                <div className="flex w-full items-center justify-between mb-6 mt-2">
+                <div className="flex w-full items-center justify-between mb-6 mt-4">
                   <div
                     className={`${styles.button} !w-[120px] h-[30px] bg-[#57a7c3]`}
                     onClick={() => setOpen(!open)}
@@ -296,7 +274,7 @@ const AllUsers: FC<Props> = ({ isTeam }) => {
                   </div>
                   <div
                     className={`${styles.button} !w-[120px] h-[30px] bg-[#d63f]`}
-                    onClick={deleteUser}
+                    onClick={handleDelete}
                   >
                     Delete
                   </div>

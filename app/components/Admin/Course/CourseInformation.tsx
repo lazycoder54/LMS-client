@@ -1,6 +1,5 @@
 import { styles } from "@/app/styles/style";
 import { useGetHeroDataQuery } from "@/redux/features/layout/layoutApi";
-import Image from "next/image";
 import React, { FC, useEffect, useState } from "react";
 
 type Props = {
@@ -19,10 +18,6 @@ const CourseInformation: FC<Props> = ({
   const [dragging, setDragging] = useState(false);
   const { data } = useGetHeroDataQuery("Categories", {});
   const [categories, setCategories] = useState([]);
-
-  useEffect(() => {
-    console.log("CourseInfo state updated:", courseInfo);
-  }, [courseInfo]);
 
   useEffect(() => {
     if (data) {
@@ -173,8 +168,8 @@ const CourseInformation: FC<Props> = ({
             <select
               name=""
               id=""
-              className={`${styles.input}  dark:text-white dark:bg-gray-800`}
-              value={courseInfo.categories}
+              className={`${styles.input}dark:text-white dark:bg-gray-800`}
+              value={courseInfo.category}
               onChange={(e: any) =>
                 setCourseInfo({ ...courseInfo, categories: e.target.value })
               }
@@ -242,7 +237,7 @@ const CourseInformation: FC<Props> = ({
             onDrop={handleDrop}
           >
             {courseInfo.thumbnail ? (
-              <Image
+              <img
                 src={courseInfo.thumbnail}
                 alt=""
                 className="max-h-full w-full object-cover"

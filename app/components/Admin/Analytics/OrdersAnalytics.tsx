@@ -9,7 +9,7 @@ import {
   CartesianGrid,
   Legend,
 } from "recharts";
-import { useGetOrderssAnalyticsQuery} from "@/redux/features/analytics/analyticsApi";
+import { useGetOrdersAnalyticsQuery} from "@/redux/features/analytics/analyticsApi";
 import { styles } from "@/app/styles/style";
 import Loader from "../../Loader/Loader";
 
@@ -18,7 +18,7 @@ type Props = {
 }
 
 export default function OrdersAnalytics({ isDashboard }: Props) {
-    const { data, isLoading } = useGetOrderssAnalyticsQuery({});
+    const { data, isLoading } = useGetOrdersAnalyticsQuery({});
 
     const analyticsData: any = [];
 

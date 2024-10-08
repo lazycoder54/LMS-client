@@ -23,13 +23,11 @@ const CourseDetailsPage = ({ id }: Props) => {
   const [createPaymentIntent, { data: paymentIntentData }] =
     useCreatePaymentIntentMutation();
   const [stripePromise, setStripePromise] = useState<any>(null);
-  const [clientSecret, setClientSecret] = useState('');
+  const [clientSecret, setClientSecret] = useState("");
 
   useEffect(() => {
-    console.log("Config data:", config);
     if (config) {
-      const publishablekey = config?.publishablekey; 
-      console.log("Received publishable key:", publishablekey);
+      const publishablekey = config?.publishablekey;
       setStripePromise(loadStripe(publishablekey));
     }
     if (data) {
@@ -40,7 +38,7 @@ const CourseDetailsPage = ({ id }: Props) => {
 
   useEffect(() => {
     if (paymentIntentData) {
-      setClientSecret(paymentIntentData?.client_Secret);
+      setClientSecret(paymentIntentData?.client_secret);
     }
   }, [paymentIntentData]);
 
@@ -69,6 +67,8 @@ const CourseDetailsPage = ({ id }: Props) => {
               data={data.course}
               stripePromise={stripePromise}
               clientSecret={clientSecret}
+              setRoute={setRoute}
+              setOpen={setOpen}
             />
           )}
           <Footer />

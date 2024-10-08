@@ -5,9 +5,8 @@ import Heading from "@/app/utils/Heading";
 import CreateCourse from "../../components/Admin/Course/CreateCourse";
 import DashboardHeader from "../../../app/components/Admin/DashboardHeader";
 
-type Props = {}
 
-const Page = (props: Props) => {
+const Page = () => {
   return (
     <div>
         <Heading

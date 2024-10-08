@@ -7,7 +7,7 @@ type Props = {};
 
 export const reviews = [
   {
-    name: "Bhargav Bordoloi",
+    name: "Loseng",
     avatar: "https://randomuser.me/api/portraits/men/1.jpg",
     proffesion: "Student | Cambridge University",
     comment:

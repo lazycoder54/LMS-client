@@ -13,35 +13,26 @@ import Footer from "../components/Footer";
 type Props = {};
 
 const Page = (props: Props) => {
-  // Wrap useSearchParams in a Suspense boundary
-  return (
-    <Suspense fallback={<Loader />}>
-      <PageContent />
-    </Suspense>
-  );
-};
-
-const PageContent = () => {
   const searchParams = useSearchParams();
-  const search = searchParams?.get("title");
+  const search = searchParams?.get('title');
   const { data, isLoading } = useGetUsersAllCoursesQuery(undefined, {});
   const { data: categoriesData } = useGetHeroDataQuery("Categories", {});
   const [route, setRoute] = useState("Login");
   const [open, setOpen] = useState(false);
-  const [courses, setCourses] = useState([]);
+  const [courses, setcourses] = useState([]);
   const [category, setCategory] = useState("All");
 
   useEffect(() => {
     if (category === "All") {
-      setCourses(data?.courses);
+      setcourses(data?.courses);
     }
     if (category !== "All") {
-      setCourses(
+      setcourses(
         data?.courses.filter((item: any) => item.categories === category)
       );
     }
     if (search) {
-      setCourses(
+      setcourses(
         data?.courses.filter((item: any) =>
           item.name.toLowerCase().includes(search.toLowerCase())
         )
@@ -64,6 +55,9 @@ const PageContent = () => {
             setOpen={setOpen}
             activeItem={1}
           />
+          {/* Wrapping with Suspense */}
+      <Suspense fallback={<Loader />}>
+      </Suspense>
           <div className="w-[95%] 800px:w-[85%] m-auto min-h-[70vh]">
             <Heading
               title={"All courses - ELearning"}

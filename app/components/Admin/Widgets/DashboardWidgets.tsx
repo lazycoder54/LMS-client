@@ -7,7 +7,8 @@ import OrdersAnalytics from "../Analytics/OrdersAnalytics";
 import AllInvoices from "../Order/AllInvoices";
 import {
   useGetCoursesAnalyticsQuery,
-  useGetOrderssAnalyticsQuery,
+  useGetOrdersAnalyticsQuery,
+  useGetUsersAnalyticsQuery,
 } from "@/redux/features/analytics/analyticsApi";
 
 type Props = {
@@ -43,11 +44,11 @@ const CircularProgressWithLabel: FC<Props> = ({ open, value }) => {
 };
 
 const DashboardWidgets: FC<Props> = ({ open }) => {
-  const [orderComparePercentage, setorderComparePercentage] = useState<any>();
+  const [ordersComparePercentage, setOrdersComparePercentage] = useState<any>();
   const [userComparePercentage, setuserComparePercentage] = useState<any>();
-  const { data, isLoading } = useGetCoursesAnalyticsQuery({});
-  const { data: ordersData, isFetching: ordersLoading } =
-    useGetOrderssAnalyticsQuery({});
+  const { data, isLoading } = useGetUsersAnalyticsQuery({});
+  const { data: ordersData, isLoading: ordersLoading } =
+    useGetOrdersAnalyticsQuery({});
 
   useEffect(() => {
     if (isLoading && ordersLoading) {
@@ -80,7 +81,7 @@ const DashboardWidgets: FC<Props> = ({ open }) => {
             percentChange: usersPercentChange,
           });
 
-          setorderComparePercentage({
+          setOrdersComparePercentage({
             currentMonth: ordersCurrentMonth,
             PreviousMonth: ordersPreviousMonth,
             percentChange: ordersPercentChange,
@@ -103,24 +104,24 @@ const DashboardWidgets: FC<Props> = ({ open }) => {
               <div className="">
                 <BiBorderLeft className="dark:text-[#45CBA0] text-[#000] text-[30px]" />
                 <h5 className="pt-2 font-Poppins dark:text-[#fff] text-black text-[20px]">
-                {orderComparePercentage?.currentMonth}
+                {ordersComparePercentage?.currentMonth}
                   
                 </h5>
-                <h5 className="py-2 font-Poppins dark:text-[#fff] text-black text-[20px] font-[400]">
+                <h5 className="py-2 font-Poppins dark:text-[#45CBA0] text-black text-[20px] font-[400]">
                   Sales Obtained
                 </h5>
               </div>
               <div>
                 <CircularProgressWithLabel value={
-                   orderComparePercentage?.percentChange > 0
+                   ordersComparePercentage?.percentChange > 0
                    ? 100
                    : 0
                 } open={open} />
-                <h5 className="text-center pt-4">
-                {orderComparePercentage?.percentChange > 0
-                    ? "+" + orderComparePercentage?.percentChange.toFixed(2)
+                <h5 className="text-center pt-4 dark:text-white text-black">
+                {ordersComparePercentage?.percentChange > 0
+                    ? "+" + ordersComparePercentage?.percentChange.toFixed(2)
                     : "-" +
-                      orderComparePercentage?.percentChange.toFixed(2)}
+                      ordersComparePercentage?.percentChange.toFixed(2)}
                   %
                    </h5>
               </div>
@@ -144,7 +145,7 @@ const DashboardWidgets: FC<Props> = ({ open }) => {
                   ? 100
                   : 0
                 } open={open} />
-                <h5 className="text-center pt-4">
+                <h5 className="text-center pt-4 dark:text-white text-black">
                   {userComparePercentage?.percentChange > 0
                     ? "+" + userComparePercentage?.percentChange.toFixed(2)
                     : "-" +

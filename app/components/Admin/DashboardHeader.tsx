@@ -26,7 +26,7 @@ const DashboardHeader: FC<Props> = ({ open, setOpen }) => {
   
   const [audio] = useState(
     new Audio(
-      "https://res.cloudinary.com/dz2eguij4/video/upload/v1710584851/mixkit-dry-pop-up-notification-alert-2356_scvfp8.mp3.wav"
+      "https://res.cloudinary.com/dz2eguij4/video/upload/v1724395967/avatars/Notification%20sound.wav"
     )
   );
 
@@ -53,7 +53,7 @@ const DashboardHeader: FC<Props> = ({ open, setOpen }) => {
     });
   }, []);
 
-  const handleNotificationsStatusChange = async (id: string) => {
+  const handleNotificationStatusChange = async (id: string) => {
     await updateNotificationStatus(id);
   };
 
@@ -83,7 +83,7 @@ const DashboardHeader: FC<Props> = ({ open, setOpen }) => {
                   </p>
 
                   <p className="text-black dark:text-white cursor-pointer"
-                    onClick={() => handleNotificationsStatusChange(item._id)}
+                    onClick={() => handleNotificationStatusChange(item._id)}
                     >
                     mark as read
                   </p>
