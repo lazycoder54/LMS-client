@@ -8,6 +8,7 @@ import React, { FC, useEffect, useState } from "react";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import socketIO from "socket.io-client";
 import { format } from "timeago.js";
+
 const ENDPOINT = process.env.NEXT_PUBLIC_SOCKET_SERVER_URI || "";
 const socketId = socketIO(ENDPOINT, { transports: ["websocket"] });
 
@@ -23,15 +24,24 @@ const DashboardHeader: FC<Props> = ({ open, setOpen }) => {
   const [updateNotificationStatus, { isSuccess }] =
     useUpdateNotificationStatusMutation();
   const [notifications, setNotifications] = useState<any>([]);
-  
-  const [audio] = useState(
-    new Audio(
-      "https://res.cloudinary.com/dz2eguij4/video/upload/v1724395967/avatars/Notification%20sound.wav"
-    )
-  );
+
+  // Use a state to store the Audio instance
+  const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    // Only initialize Audio if running in the browser (client-side)
+    if (typeof window !== "undefined") {
+      const audioInstance = new Audio(
+        "https://res.cloudinary.com/dz2eguij4/video/upload/v1724395967/avatars/Notification%20sound.wav"
+      );
+      setAudio(audioInstance);
+    }
+  }, []);
 
   const playNotificationSound = () => {
-    audio.play();
+    if (audio) {
+      audio.play().catch((err) => console.error("Failed to play audio", err));
+    }
   };
 
   useEffect(() => {
@@ -43,15 +53,17 @@ const DashboardHeader: FC<Props> = ({ open, setOpen }) => {
     if (isSuccess) {
       refetch();
     }
-    audio.load();
-  }, [data, isSuccess]);
+    if (audio) {
+      audio.load();
+    }
+  }, [data, isSuccess, audio]);
 
   useEffect(() => {
-    socketId.on("newNotification", (data) => {
+    socketId.on("newNotification", () => {
       refetch();
       playNotificationSound();
     });
-  }, []);
+  }, [audio]);
 
   const handleNotificationStatusChange = async (id: string) => {
     await updateNotificationStatus(id);
@@ -76,21 +88,21 @@ const DashboardHeader: FC<Props> = ({ open, setOpen }) => {
           </h5>
           {notifications &&
             notifications.map((item: any, index: number) => (
-              <div className="dark:bg-[#2d3a4e] bg-[#00000013] font-Poppins border-b dark:border-b-[#ffffff47] border-b-[#0000000f]" key={index}>
+              <div
+                className="dark:bg-[#2d3a4e] bg-[#00000013] font-Poppins border-b dark:border-b-[#ffffff47] border-b-[#0000000f]"
+                key={index}
+              >
                 <div className="w-full flex items-center justify-between p-2">
-                  <p className="text-black dark:text-white">
-                    {item.title}
-                  </p>
+                  <p className="text-black dark:text-white">{item.title}</p>
 
-                  <p className="text-black dark:text-white cursor-pointer"
+                  <p
+                    className="text-black dark:text-white cursor-pointer"
                     onClick={() => handleNotificationStatusChange(item._id)}
-                    >
+                  >
                     mark as read
                   </p>
                 </div>
-                <p className="px-2 text-black dark:text-white">
-                  {item.message}
-                </p>
+                <p className="px-2 text-black dark:text-white">{item.message}</p>
                 <p className="p-2 text-black dark:text-white text-[14px]">
                   {format(item.createdAt)}
                 </p>
@@ -101,4 +113,5 @@ const DashboardHeader: FC<Props> = ({ open, setOpen }) => {
     </div>
   );
 };
+
 export default DashboardHeader;

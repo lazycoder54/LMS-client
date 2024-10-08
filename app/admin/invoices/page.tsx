@@ -1,9 +1,10 @@
-'use client'
+'use client';
 import React from "react";
 import Heading from "../../../app/utils/Heading";
 import AdminSidebar from "../../components/Admin/sidebar/AdminSidebar";
 import DashboardHeader from "@/app/components/Admin/DashboardHeader";
 import AllInvoices from "../../../app/components/Admin/Order/AllInvoices";
+
 type Props = {}
 
 const Page = (props: Props) => {
