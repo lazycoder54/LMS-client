@@ -32,7 +32,7 @@ const DashboardHeader: FC<Props> = ({ open, setOpen }) => {
     // Only initialize Audio if running in the browser (client-side)
     if (typeof window !== "undefined") {
       const audioInstance = new Audio(
-        "https://res.cloudinary.com/dz2eguij4/video/upload/v1724395967/avatars/Notification%20sound.wav"
+        "https://res.cloudinary.com/dz2eguij4/video/upload/v1728463508/Notification_sound_qsuyrt.wav"
       );
       setAudio(audioInstance);
     }

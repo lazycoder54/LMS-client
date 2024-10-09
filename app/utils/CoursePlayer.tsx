@@ -19,18 +19,16 @@ const CoursePlayer: FC<Props> = ({ videoUrl }) => {
       })
       .then((res) => {
         setVideoData(res.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching OTP:", error);
       });
   }, [videoUrl]);
-  
 
   return (
-    <div style={{ position: "relative", paddingTop: "56.25%", overflow:"hidden"}}>
+    <div
+      style={{ position: "relative", paddingTop: "56.25%", overflow: "hidden" }}
+    >
       {videoData.otp && videoData.playbackInfo !== "" && (
         <iframe
-          src={`https://player.vdocipher.com/v2/?otp=${videoData?.otp}&playbackInfo=${videoData.playbackInfo}&player=28w3iAr8mfrMHini`}
+          src={`https://player.vdocipher.com/v2/?otp=${videoData?.otp}&playbackInfo=${videoData.playbackInfo}&player=bNM8Df8ZggpXc3K0`}
           style={{
             position: "absolute",
             top: 0,
